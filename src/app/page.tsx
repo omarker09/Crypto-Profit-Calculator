@@ -1,113 +1,188 @@
-import Image from "next/image";
+"use client"
+import React, { useState, useEffect } from "react";
+import "../app/globals.css"
+
+import { FaBitcoin } from "react-icons/fa6";
+import { CiSearch } from "react-icons/ci";
+import { MdOutlineArrowDropUp } from "react-icons/md";
+import { MdOutlineArrowDropDown } from "react-icons/md";
+import { FaRegTrashCan } from "react-icons/fa6";
+
+const MainApp = () => {
+
+  // State
+  const [search, setSearch] = useState<string>("");
+  const [InitialValue, setInitialValue] = useState<any>();
+  const [cryptoPrice, setCryptoPrice] = useState<any>();
+  const [sellPrice, setSellPrice] = useState<any>()
+  const [investFeePercentage, setInvestFeePercentage] = useState<any>();
+  const [exitFeePercentage, setExitFeePercentage] = useState<any>();
+  const [maxOutput, setMaxoutput] = useState<any>();
+  const [totalProfit, setTotalProfit] = useState<any>();
+  const [profitPercentage, setProfitPercentage] = useState<any>();
+  const [isGain, setIsGain] = useState<boolean>(true)
+
+  // Calculations
+  function Calculate() {
+    let amount = (InitialValue || 0) / (cryptoPrice || 0);
+    let output = (amount * (sellPrice || 0)) * (1 - (investFeePercentage || 0) / 100) * (1 - (exitFeePercentage || 0) / 100);
+    let profit = output - (InitialValue || 0);
+    let profitPercentage = (profit / (InitialValue || 0)) * 100;
+    setProfitPercentage(profitPercentage);
+    setTotalProfit(profit);
+    setMaxoutput(output);
+    if (output < (InitialValue || 0)) {
+      setIsGain(false)
+    } else if (output > (InitialValue || 0)) {
+      setIsGain(true)
+    }
+  }
+
+  function ClearInputs() {
+    setSearch("");
+    setCryptoPrice("");
+    setExitFeePercentage("");
+    setInitialValue("");
+    setInvestFeePercentage("");
+    setIsGain(true)
+    setMaxoutput("");
+    setProfitPercentage("");
+    setSellPrice("")
+    setTotalProfit("")
+  }
+
+  useEffect(() => {
+    Calculate();
+  }, [InitialValue, cryptoPrice, sellPrice, investFeePercentage, exitFeePercentage])
+
+  return (
+    <div className=" w-full sm:w-[700px] flex flex-col py-4 px-5 gap-5 items-center justify-center">
+      <span className=" flex items-center justify-start w-full pb-2 gap-3">
+        <FaBitcoin size={45} className=" text-orange-500" />
+        <h2 className=" text-sm sm:text-xl text-black font-bold">Crypto Profit Calculator APP</h2>
+      </span>
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 w-full">
+        <div className="flex h-24 flex-col gap-1 w-full">
+          <p>Coin</p>
+          <div className="flex gap-1  items-center w-full justify-between py-3 px-3 rounded-lg custom-border">
+            <input value={search} onChange={(e) => { setSearch(e.target.value) }} className="custom-focus w-full" type="text" placeholder="Search Coin" />
+            <span className="duration-300 bg-gray-200 sm:bg-transparent hover:bg-gray-200 rounded-full p-2 active:bg-gray-300">
+              <CiSearch size={25} className=" duration-300  rounded-full cursor-pointer" />
+            </span>
+          </div>
+        </div>
+        <div className="flex h-24 flex-col gap-1">
+          <p>Investment</p>
+          <div className="flex gap-1 h-full items-center justify-center rounded-lg custom-border overflow-hidden">
+            <span className=" h-full px-7 text-2xl w-4 bg-gray-100 flex items-center justify-center default-orange-color">
+              $
+            </span>
+            <div className=" px-2 flex items-center w-full justify-between gap-1">
+              <input value={InitialValue} onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+                const newValue = parseFloat(e.target.value)
+                setInitialValue(newValue);
+              }} className="custom-focus w-full py-4" type="number" placeholder="0" />
+            </div>
+          </div>
+        </div>
+        <div className="flex h-24 flex-col gap-1">
+          <p>Buy Price</p>
+          <div className="flex gap-1 h-full items-center justify-center rounded-lg custom-border overflow-hidden">
+            <span className=" h-full px-7 text-2xl w-4 bg-gray-100 flex items-center justify-center default-orange-color">
+              $
+            </span>
+            <div className=" px-2 flex items-center w-full justify-between gap-1">
+              <input value={cryptoPrice} onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+                const newValue = parseFloat(e.target.value)
+                setCryptoPrice(newValue);
+              }} className="custom-focus w-full py-4" type="number" placeholder="0" />
+            </div>
+          </div>
+        </div>
+        <div className="flex h-24 flex-col gap-1">
+          <p>Sell Price</p>
+          <div className="flex gap-1 h-full items-center justify-center rounded-lg custom-border overflow-hidden">
+            <span className=" h-full px-7 text-2xl w-4 bg-gray-100 flex items-center justify-center default-orange-color">
+              $
+            </span>
+            <div className=" px-2 flex items-center w-full justify-between gap-1">
+              <input value={sellPrice} onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+                const newValue = parseFloat(e.target.value)
+                setSellPrice(newValue);
+              }} className="custom-focus w-full py-4" type="number" placeholder="0" />
+            </div>
+          </div>
+        </div>
+        <div className="flex h-24 flex-col gap-1">
+          <p>Exit Fee</p>
+          <div className="flex gap-1 h-full items-center justify-center rounded-lg custom-border overflow-hidden">
+            <span className=" h-full px-7 text-2xl w-4 bg-gray-100 flex items-center justify-center default-orange-color">
+              %
+            </span>
+            <div className="px-2 flex items-center w-full justify-between gap-1">
+              <input value={exitFeePercentage} onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+                const newValue = parseFloat(e.target.value)
+                setExitFeePercentage(newValue);
+              }} className="custom-focus w-full py-4" type="number" placeholder="0" />
+            </div>
+          </div>
+        </div>
+        <div className="flex h-24 flex-col gap-1">
+          <p>Investment Fee</p>
+          <div className="flex gap-1 h-full items-center justify-center rounded-lg custom-border overflow-hidden">
+            <span className=" h-full px-7 text-2xl w-4 bg-gray-100 flex items-center justify-center default-orange-color">
+              %
+            </span>
+            <div className=" px-2 flex items-center w-full justify-between gap-1">
+              <input value={investFeePercentage} onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+                const newValue = parseFloat(e.target.value)
+                setInvestFeePercentage(newValue);
+              }} className="custom-focus w-full py-4" type="number" placeholder="0" />
+            </div>
+          </div>
+        </div>
+      </div>
+      <div className=" w-full h-auto custom-border rounded-lg p-3">
+        <div className="flex items-center justify-between">
+          <h1 className="text-base sm:text-2xl font-bold">Investment Resault :</h1>
+          <div onClick={() => {ClearInputs()}} className="flex items-center gap-1 cursor-pointer bg-orange-400 p-1 sm:p-2 rounded-lg">
+            <FaRegTrashCan className="text-white" />
+            <p className="text-white text-sm sm:text-base">Clear</p>
+          </div>
+        </div>
+        <div className="py-5 flex flex-col gap-6">
+          <div className="flex flex-col gap-1">
+            <p className=" text-gray-500">Profit/Loss</p>
+            <div className={isGain !== true ? "p-2 bg-red-200 w-min text-center rounded-lg flex items-center" : "p-2 bg-green-200 w-min text-center rounded-lg flex items-center"}>
+              {isGain !== true ? <MdOutlineArrowDropDown className=" text-red-700 font-bold" /> : <MdOutlineArrowDropUp className=" text-green-700 font-bold" />}
+              <span className="text-green-500 font-bold"> {(Math.abs((totalProfit || 0)).toFixed(2)) || 0}$</span>
+              <span className="text-red-500 font-bold"> ({((profitPercentage || 0).toFixed(2)) || 0}%)</span>
+            </div>
+          </div>
+          <div className=" flex items-center justify-start w-full gap-7">
+            <div className="flex flex-col gap-1">
+              <p className=" text-gray-500">Investment Amount</p>
+              <div className="p-2 bg-green-200 w-min text-center rounded-lg flex items-center">
+                <span className="text-green-500 font-bold"> {(InitialValue || 0).toLocaleString()}$</span>
+              </div>
+            </div>
+            <div className="flex flex-col gap-1">
+              <h1 className=" text-gray-500">Total</h1>
+              <div className="p-2 bg-green-200 w-min text-center rounded-lg flex items-center">
+                <span className="text-green-500 font-bold"> {(maxOutput || 0).toLocaleString()}$</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  )
+}
 
 export default function Home() {
   return (
-    <main className="flex min-h-screen flex-col items-center justify-between p-24">
-      <div className="z-10 w-full max-w-5xl items-center justify-between font-mono text-sm lg:flex">
-        <p className="fixed left-0 top-0 flex w-full justify-center border-b border-gray-300 bg-gradient-to-b from-zinc-200 pb-6 pt-8 backdrop-blur-2xl dark:border-neutral-800 dark:bg-zinc-800/30 dark:from-inherit lg:static lg:w-auto  lg:rounded-xl lg:border lg:bg-gray-200 lg:p-4 lg:dark:bg-zinc-800/30">
-          Get started by editing&nbsp;
-          <code className="font-mono font-bold">src/app/page.tsx</code>
-        </p>
-        <div className="fixed bottom-0 left-0 flex h-48 w-full items-end justify-center bg-gradient-to-t from-white via-white dark:from-black dark:via-black lg:static lg:size-auto lg:bg-none">
-          <a
-            className="pointer-events-none flex place-items-center gap-2 p-8 lg:pointer-events-auto lg:p-0"
-            href="https://vercel.com?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            By{" "}
-            <Image
-              src="/vercel.svg"
-              alt="Vercel Logo"
-              className="dark:invert"
-              width={100}
-              height={24}
-              priority
-            />
-          </a>
-        </div>
-      </div>
-
-      <div className="relative z-[-1] flex place-items-center before:absolute before:h-[300px] before:w-full before:-translate-x-1/2 before:rounded-full before:bg-gradient-radial before:from-white before:to-transparent before:blur-2xl before:content-[''] after:absolute after:-z-20 after:h-[180px] after:w-full after:translate-x-1/3 after:bg-gradient-conic after:from-sky-200 after:via-blue-200 after:blur-2xl after:content-[''] before:dark:bg-gradient-to-br before:dark:from-transparent before:dark:to-blue-700 before:dark:opacity-10 after:dark:from-sky-900 after:dark:via-[#0141ff] after:dark:opacity-40 sm:before:w-[480px] sm:after:w-[240px] before:lg:h-[360px]">
-        <Image
-          className="relative dark:drop-shadow-[0_0_0.3rem_#ffffff70] dark:invert"
-          src="/next.svg"
-          alt="Next.js Logo"
-          width={180}
-          height={37}
-          priority
-        />
-      </div>
-
-      <div className="mb-32 grid text-center lg:mb-0 lg:w-full lg:max-w-5xl lg:grid-cols-4 lg:text-left">
-        <a
-          href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-          className="group rounded-lg border border-transparent px-5 py-4 transition-colors hover:border-gray-300 hover:bg-gray-100 hover:dark:border-neutral-700 hover:dark:bg-neutral-800/30"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <h2 className="mb-3 text-2xl font-semibold">
-            Docs{" "}
-            <span className="inline-block transition-transform group-hover:translate-x-1 motion-reduce:transform-none">
-              -&gt;
-            </span>
-          </h2>
-          <p className="m-0 max-w-[30ch] text-sm opacity-50">
-            Find in-depth information about Next.js features and API.
-          </p>
-        </a>
-
-        <a
-          href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          className="group rounded-lg border border-transparent px-5 py-4 transition-colors hover:border-gray-300 hover:bg-gray-100 hover:dark:border-neutral-700 hover:dark:bg-neutral-800/30"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <h2 className="mb-3 text-2xl font-semibold">
-            Learn{" "}
-            <span className="inline-block transition-transform group-hover:translate-x-1 motion-reduce:transform-none">
-              -&gt;
-            </span>
-          </h2>
-          <p className="m-0 max-w-[30ch] text-sm opacity-50">
-            Learn about Next.js in an interactive course with&nbsp;quizzes!
-          </p>
-        </a>
-
-        <a
-          href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-          className="group rounded-lg border border-transparent px-5 py-4 transition-colors hover:border-gray-300 hover:bg-gray-100 hover:dark:border-neutral-700 hover:dark:bg-neutral-800/30"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <h2 className="mb-3 text-2xl font-semibold">
-            Templates{" "}
-            <span className="inline-block transition-transform group-hover:translate-x-1 motion-reduce:transform-none">
-              -&gt;
-            </span>
-          </h2>
-          <p className="m-0 max-w-[30ch] text-sm opacity-50">
-            Explore starter templates for Next.js.
-          </p>
-        </a>
-
-        <a
-          href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-          className="group rounded-lg border border-transparent px-5 py-4 transition-colors hover:border-gray-300 hover:bg-gray-100 hover:dark:border-neutral-700 hover:dark:bg-neutral-800/30"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <h2 className="mb-3 text-2xl font-semibold">
-            Deploy{" "}
-            <span className="inline-block transition-transform group-hover:translate-x-1 motion-reduce:transform-none">
-              -&gt;
-            </span>
-          </h2>
-          <p className="m-0 max-w-[30ch] text-balance text-sm opacity-50">
-            Instantly deploy your Next.js site to a shareable URL with Vercel.
-          </p>
-        </a>
-      </div>
-    </main>
+    <div className="w-full flex flex-col justify-center items-center">
+      <MainApp />
+    </div>
   );
 }
