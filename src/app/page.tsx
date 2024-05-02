@@ -79,12 +79,15 @@ const MainApp = ({ setIsLoading }: any) => {
     Calculate();
   }, [InitialValue, cryptoPrice, sellPrice, investFeePercentage, exitFeePercentage])
 
-  // Fetching The Buy Price From CoinGeko API
+  // Fetching The Buy Price From CoinGecko API
   function fetchData() {
     const url = `https://api.coingecko.com/api/v3/simple/price?ids=${searchQuery}&vs_currencies=usd&supported_vs_currencies`;
     const options = {
       method: 'GET',
-      headers: { accept: 'application/json', 'x-cg-demo-api-key': 'CG-2nAunhg98kHZ1zBYTPGRNx9j' }
+      headers: {
+        accept: 'application/json',
+        'x-cg-demo-api-key': process.env.NEXT_PUBLIC_API_KEY || "No Token"
+      }
     };
     // If The Search Input Is Empty then return nothing
     if (!searchQuery) {
@@ -216,7 +219,7 @@ const MainApp = ({ setIsLoading }: any) => {
               %
             </span>
             <div className=" px-2 flex items-center w-full justify-between gap-1">
-              <input value={investFeePercentage}  onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+              <input value={investFeePercentage} onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
                 const newValue = parseFloat(e.target.value)
                 setInvestFeePercentage(newValue);
               }} className="custom-focus w-full py-4" type="number" placeholder="0" />
