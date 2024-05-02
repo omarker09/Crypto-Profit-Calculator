@@ -11,7 +11,7 @@
   outline: none;
 }
 .custom-focus::placeholder {
-  font-size: 17px;
+  font-size: 14px;
   font-weight: 700;
 }
 .custom-border {
