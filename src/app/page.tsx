@@ -81,7 +81,7 @@ const MainApp = ({ setIsLoading }: any) => {
 
   // Fetching The Buy Price From CoinGecko API
   function fetchData() {
-    const url = `https://api.coingecko.com/api/v3/simple/price?ids=${searchQuery}&vs_currencies=usd&supported_vs_currencies`;
+    const url = `https://api.coingecko.com/api/v3/simple/price?ids=${searchQuery.split(" ")}&vs_currencies=usd&supported_vs_currencies`;
     const options = {
       method: 'GET',
       headers: {
